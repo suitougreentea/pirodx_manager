@@ -10,7 +10,7 @@ src = './app/'
 dest = './app_build/'
 
 html = [src + 'index.slim', src + 'views/**/*.slim']
-css = src + 'styles/**/*.sass'
+css = src + 'layouts/**/*.sass'
 js = src + 'scripts/**/*.coffee'
 
 g.task 'clean', ->
