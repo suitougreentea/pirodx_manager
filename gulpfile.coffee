@@ -31,10 +31,10 @@ g.task 'js', ->
     .pipe(coffee())
     .pipe(g.dest(dest))
 
-g.task 'copyall', ->
+g.task 'copy_all', ->
   g.src(src + "*").pipe(g.dest(dest))
 
-g.task 'removesrc', ->
+g.task 'remove_src', ->
   del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee']
 
 g.task 'make', ->
