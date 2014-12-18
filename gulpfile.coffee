@@ -38,4 +38,4 @@ g.task 'remove_src', ->
   del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee']
 
 g.task 'make', ->
-  runSequence('clean', 'copyall', ['html', 'css', 'js'], 'removesrc')
+  runSequence('clean', 'copy_all', ['html', 'css', 'js'], 'remove_src')
