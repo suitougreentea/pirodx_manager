@@ -9,12 +9,12 @@ runSequence = require('run-sequence')
 src = './app/'
 dest = './app_build/'
 
-html = [src + 'index.slim', src + 'views/**/*.slim']
-css = src + 'styles/**/*.sass'
-js = src + 'scripts/**/*.coffee'
+html = [dest + 'index.slim', dest + 'views/**/*.slim']
+css = dest + 'styles/**/*.sass'
+js = dest + 'scripts/**/*.coffee'
 
-g.task 'clean', ->
-  del [dest + '**']
+g.task 'clean', (cb) ->
+  del [dest + '**'], cb
 
 g.task 'html', ->
   g.src(html)
@@ -32,10 +32,11 @@ g.task 'js', ->
     .pipe(g.dest(dest))
 
 g.task 'copy_all', ->
-  g.src(src + "**/*").pipe(g.dest(dest))
+  g.src(src + "**/*")
+    .pipe(g.dest(dest))
 
-g.task 'remove_src', ->
-  del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee']
+g.task 'remove_src', (cb) ->
+  del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee'], cb
 
-g.task 'make', ->
+g.task 'build', ->
   runSequence('clean', 'copy_all', ['html', 'css', 'js'], 'remove_src')
