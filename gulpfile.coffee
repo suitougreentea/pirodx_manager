@@ -32,7 +32,7 @@ g.task 'js', ->
     .pipe(g.dest(dest))
 
 g.task 'copy_all', ->
-  g.src(src + "*").pipe(g.dest(dest))
+  g.src(src + "**/*").pipe(g.dest(dest))
 
 g.task 'remove_src', ->
   del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee']
