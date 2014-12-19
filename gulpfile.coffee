@@ -8,7 +8,7 @@ coffee = require('gulp-coffee')
 del = require('del')
 runSequence = require('run-sequence')
 
-###### Valiable ######
+###### Variable ######
 src = './app/'
 dest = './app_build/'
 
