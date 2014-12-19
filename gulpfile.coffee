@@ -1,5 +1,6 @@
 ###### Require ######
 g = require('gulp')
+webpack = require('gulp-webpack')
 
 slim = require('gulp-slim')
 sass = require('gulp-sass')
@@ -54,10 +55,15 @@ g.task 'copy_all', ->
   g.src(src + "**/*")
     .pipe(g.dest(dest))
 
+g.task "webpack", ->
+  g.src(js_dest + 'main.js')
+    .pipe(webpack())
+    .pipe(g.dest(js_dest))
+
 g.task 'remove_src', (cb) ->
   del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee'], cb
 
 g.task 'build', ->
-  runSequence('clean', 'copy_all', ['html', 'css', 'js', 'font'], 'remove_src')
+  runSequence('clean', 'copy_all', ['html', 'css', 'js', 'font'], 'webpack', 'remove_src')
 
 ###### Watch ######
