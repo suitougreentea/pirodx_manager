@@ -1,12 +1,11 @@
 ###### Require ######
 g = require('gulp')
-webpack = require('gulp-webpack')
 
-slim = require('gulp-slim')
-sass = require('gulp-sass')
-coffee = require('gulp-coffee')
-del = require('del')
-runSequence = require('run-sequence')
+# gulp-load-plugins will automatically load plugins starting with "gulp-"
+$ = require('gulp-load-plugins')()
+# manually loaded plugins
+$.del = require('del')
+$.runSequence = require('run-sequence')
 
 ###### Variable ######
 src = './app/'
@@ -27,24 +26,24 @@ font_src = bower_dir + 'bootstrap-sass-official/assets/fonts/'
 
 ###### Task ######
 g.task 'clean', (cb) ->
-  del [dest + '**'], cb
+  $.del [dest + '**'], cb
 
 g.task 'html', ->
   g.src(dest + 'index.slim')
-    .pipe(slim(pretty: true))
+    .pipe($.slim(pretty: true))
     .pipe(g.dest(dest))
   g.src(html_src)
-    .pipe(slim(pretty: true))
+    .pipe($.slim(pretty: true))
     .pipe(g.dest(html_dest))
 
 g.task 'css', ->
   g.src(css_src)
-    .pipe(sass())
+    .pipe($.sass())
     .pipe(g.dest(css_dest))
 
 g.task 'js', ->
   g.src(js_src)
-    .pipe(coffee())
+    .pipe($.coffee())
     .pipe(g.dest(js_dest))
 
 g.task 'font', ->
@@ -57,13 +56,13 @@ g.task 'copy_all', ->
 
 g.task "webpack", ->
   g.src(js_dest + 'main.js')
-    .pipe(webpack())
+    .pipe($.webpack())
     .pipe(g.dest(js_dest))
 
 g.task 'remove_src', (cb) ->
-  del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee'], cb
+  $.del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee'], cb
 
 g.task 'build', ->
-  runSequence('clean', 'copy_all', ['html', 'css', 'js', 'font'], 'webpack', 'remove_src')
+  $.runSequence('clean', 'copy_all', ['html', 'css', 'js', 'font'], 'webpack', 'remove_src')
 
 ###### Watch ######
