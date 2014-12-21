@@ -26,7 +26,7 @@ font_src = bower_dir + 'bootstrap-sass-official/assets/fonts/'
 
 ###### Task ######
 g.task 'clean', (cb) ->
-  $.del [dest + '**'], cb
+  $.del [dest + '**/*'], cb
 
 g.task 'html', ->
   g.src(dest + 'index.slim')
