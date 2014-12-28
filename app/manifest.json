@@ -8,5 +8,13 @@
       "scripts": ["scripts/background.js"]
     }
   },
-  "icons": { "16": "images/icon-16.png", "48": "images/icon-48.png", "128": "images/icon-128.png" }
+  "icons": { "16": "images/icon-16.png", "48": "images/icon-48.png", "128": "images/icon-128.png" },
+  "permissions": [
+    "alarms",
+    "background",
+    "storage",
+    "unlimitedStorage",
+    "http://p.eagate.573.jp/",
+    "https://p.eagate.573.jp/"
+  ]
 }
