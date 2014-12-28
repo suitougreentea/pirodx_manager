@@ -1,69 +1,46 @@
 ###### Require ######
 g = require('gulp')
-webpack = require('gulp-webpack')
 
-slim = require('gulp-slim')
-sass = require('gulp-sass')
-coffee = require('gulp-coffee')
-del = require('del')
-runSequence = require('run-sequence')
+# gulp-load-plugins will automatically load plugins starting with "gulp-"
+$ = require('gulp-load-plugins')()
+# manually loaded plugins
+$.del = require('del')
+$.runSequence = require('run-sequence')
 
 ###### Variable ######
-src = './app/'
-dest = './app_build/'
+src  = 'app/'
+dest = 'app_build/'
 
-npm_dir = "./node_modules/"
-bower_dir = "./bower_components/"
+npm_dir   = "node_modules/"
+bower_dir = "bower_components/"
 
-html_dest = dest + 'views/'
-css_dest = dest + 'styles/'
-js_dest = dest + 'scripts/'
-font_dest = dest + 'fonts/'
+slim_src  = src + '**/*.slim'
+sass_src   = src + '**/*.sass'
+coffee_src    = src + '**/*.coffee'
+font_src  = bower_dir + 'bootstrap-sass-official/assets/fonts/bootstrap/*'
 
-html_src = html_dest + '**/*.slim'
-css_src = css_dest + '**/*.sass'
-js_src = js_dest + '**/*.coffee'
-font_src = bower_dir + 'bootstrap-sass-official/assets/fonts/'
+###### Function ######
+compile_slim = (s)   -> g.src(s, {base: src}).pipe($.slim(pretty: true)).pipe(g.dest(dest))
+compile_sass = (s)   -> g.src(s, {base: src}).pipe($.sass()).pipe(g.dest(dest))
+compile_coffee = (s) -> g.src(s, {base: src}).pipe($.coffee()).pipe(g.dest(dest))
 
 ###### Task ######
-g.task 'clean', (cb) ->
-  del [dest + '**'], cb
+g.task 'slim',       -> compile_slim(slim_src)
+g.task 'sass',       -> compile_sass(sass_src)
+g.task 'coffee',     -> compile_coffee(coffee_src)
+g.task 'font',       -> g.src(font_src).pipe(g.dest(dest + 'fonts/bootstrap/'))
+g.task 'copy',       -> g.src(src + '**/!(*.slim|*.sass|*.coffee)').pipe(g.dest(dest))
+g.task 'clean', (cb) -> $.del(dest, cb)
+g.task 'build',      -> $.runSequence('clean', 'copy', ['slim', 'sass', 'coffee', 'font'], 'webpack')
 
-g.task 'html', ->
-  g.src(dest + 'index.slim')
-    .pipe(slim(pretty: true))
-    .pipe(g.dest(dest))
-  g.src(html_src)
-    .pipe(slim(pretty: true))
-    .pipe(g.dest(html_dest))
-
-g.task 'css', ->
-  g.src(css_src)
-    .pipe(sass())
-    .pipe(g.dest(css_dest))
-
-g.task 'js', ->
-  g.src(js_src)
-    .pipe(coffee())
-    .pipe(g.dest(js_dest))
-
-g.task 'font', ->
-  g.src(font_src + "**/*")
-    .pipe(g.dest(font_dest))
-
-g.task 'copy_all', ->
-  g.src(src + "**/*")
-    .pipe(g.dest(dest))
-
+# do nothing so far
 g.task "webpack", ->
-  g.src(js_dest + 'main.js')
-    .pipe(webpack())
-    .pipe(g.dest(js_dest))
-
-g.task 'remove_src', (cb) ->
-  del [dest + '**/*.slim', dest + '**/*.sass', dest + '**/*.coffee'], cb
-
-g.task 'build', ->
-  runSequence('clean', 'copy_all', ['html', 'css', 'js', 'font'], 'webpack', 'remove_src')
+  g.src(dest + 'scripts/main.js')
+    .pipe($.webpack())
+    .pipe(g.dest(dest + 'scripts/'))
 
 ###### Watch ######
+g.task 'watch', ->
+  $.watch(slim_src, (vinyl) -> compile_slim(vinyl.path))
+  $.watch(sass_src, (vinyl) -> compile_sass(vinyl.path))
+  $.watch(coffee_src, (vinyl) -> compile_coffee(vinyl.path))
