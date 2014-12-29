@@ -11,7 +11,7 @@ module.exports = (config) ->
     frameworks: ["jasmine"]
 
     # list of files / patterns to load in the browser
-    files: ["test/pendual/unit/*.coffee"]
+    files: ["test/**/test_*.coffee"]
 
     # list of files to exclude
     exclude: []
@@ -19,10 +19,10 @@ module.exports = (config) ->
     # preprocess matching files before serving them to the browser
     # available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors:
-      '**/*.coffee' : ['coffee', 'webpack', 'sourcemap']
+      "test/**/test_*.coffee" : ["webpack", "sourcemap"]
 
     # test results reporter to use
-    # possible values: 'dots', 'progress'
+    # possible values: "dots", "progress"
     # available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ["progress"]
 
@@ -41,15 +41,14 @@ module.exports = (config) ->
 
     # start these browsers
     # available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ["Chrome"]
+    # browsers: ["Chrome"]
+    browsers: ["PhantomJS"]
 
-    plugins: [
-      'karma-chrome-launcher'
-      'karma-coffee-preprocessor'
-      'karma-jasmine'
-      'karma-sourcemap-loader'
-      'karma-webpack'
-    ]
+    webpack:
+      watch: true
+      module:
+        loaders: [test: /\.coffee$/, loader: "coffee-loader"]
+      devtool: "inline-source-map"
 
     # Continuous Integration mode
     # if true, Karma captures browsers, runs the tests and exits
