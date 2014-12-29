@@ -42,28 +42,28 @@ g.task "webpack", ->
     .pipe(g.dest(dest + 'scripts/'))
 
 g.task 'convert_fixtures_convert_encoding', ->
-  g.src(fixtures_dir + '*.html')
+  g.src(fixtures_dir + '**/*.html')
     .pipe($.shell('iconv -f sjis -t utf-8 <%= file.path %> > <%= file.path + "-utf8" %>', ignoreErrors: true))
 
 g.task 'convert_fixtures_html2slim', ->
-  g.src(fixtures_dir + '*.html-utf8')
+  g.src(fixtures_dir + '**/*.html-utf8')
     .pipe($.shell('html2slim <%= file.path %> <%= file.path.replace(/\.html-utf8/, ".slim") %>', ignoreErrors: true))
 
 g.task 'convert_fixtures_slim2html', ->
-  g.src(fixtures_dir + '*.slim')
+  g.src(fixtures_dir + '**/*.slim')
     .pipe($.shell('slimrb -p <%= file.path %> <%= file.path.replace(/\.slim/, ".html-converted") %>', ignoreErrors: true))
 
 g.task 'convert_fixtures_remove_head', ->
-  g.src(fixtures_dir + '*.html-converted')
+  g.src(fixtures_dir + '**/*.html-converted')
     .pipe($.shell('sed -e \'/<head>/,/<\\/head>/d\' <%= file.path %> > <%= file.path.replace(/\.html-converted/, ".html-removed") %>', ignoreErrors: true))
 
 g.task 'convert_fixtures_overwrite_sources', ->
-  g.src(fixtures_dir + '*.html-removed')
+  g.src(fixtures_dir + '**/*.html-removed')
     .pipe($.rename(extname: '.html'))
     .pipe(g.dest(fixtures_dir))
 
 g.task 'convert_fixtures_delete_temporary_files', (cb) ->
-  $.del(fixtures_dir + '*.@(html-@(utf8|converted|removed)|slim)', cb)
+  $.del(fixtures_dir + '**/*.@(html-@(utf8|converted|removed)|slim)', cb)
 
 g.task "convert_fixtures", (cb) ->
   $.runSequence('convert_fixtures_convert_encoding', 'convert_fixtures_html2slim', 'convert_fixtures_slim2html', 'convert_fixtures_remove_head', 'convert_fixtures_overwrite_sources', 'convert_fixtures_delete_temporary_files', cb)
