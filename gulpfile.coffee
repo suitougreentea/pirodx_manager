@@ -41,32 +41,32 @@ g.task "webpack", ->
     .pipe($.webpack(require('./webpack.config.js')))
     .pipe(g.dest(dest + 'scripts/'))
 
-g.task 'process_fixtures_convert_encoding', ->
+g.task 'convert_fixtures_convert_encoding', ->
   g.src(fixtures_dir + '*.html')
     .pipe($.shell('iconv -f sjis -t utf-8 <%= file.path %> > <%= file.path + "-utf8" %>', ignoreErrors: true))
 
-g.task 'process_fixtures_html2slim', ->
+g.task 'convert_fixtures_html2slim', ->
   g.src(fixtures_dir + '*.html-utf8')
     .pipe($.shell('html2slim <%= file.path %> <%= file.path.replace(/\.html-utf8/, ".slim") %>', ignoreErrors: true))
 
-g.task 'process_fixtures_slim2html', ->
+g.task 'convert_fixtures_slim2html', ->
   g.src(fixtures_dir + '*.slim')
     .pipe($.shell('slimrb -p <%= file.path %> <%= file.path.replace(/\.slim/, ".html-converted") %>', ignoreErrors: true))
 
-g.task 'process_fixtures_remove_head', ->
+g.task 'convert_fixtures_remove_head', ->
   g.src(fixtures_dir + '*.html-converted')
     .pipe($.shell('sed -e \'/<head>/,/<\\/head>/d\' <%= file.path %> > <%= file.path.replace(/\.html-converted/, ".html-removed") %>', ignoreErrors: true))
 
-g.task 'process_fixtures_overwrite_sources', ->
+g.task 'convert_fixtures_overwrite_sources', ->
   g.src(fixtures_dir + '*.html-removed')
     .pipe($.rename(extname: '.html'))
     .pipe(g.dest(fixtures_dir))
 
-g.task 'process_fixtures_delete_temporary_files', (cb) ->
+g.task 'convert_fixtures_delete_temporary_files', (cb) ->
   $.del(fixtures_dir + '*.@(html-@(utf8|converted|removed)|slim)', cb)
 
-g.task "process_fixtures", (cb) ->
-  $.runSequence('process_fixtures_convert_encoding', 'process_fixtures_html2slim', 'process_fixtures_slim2html', 'process_fixtures_remove_head', 'process_fixtures_overwrite_sources', 'process_fixtures_delete_temporary_files', cb)
+g.task "convert_fixtures", (cb) ->
+  $.runSequence('convert_fixtures_convert_encoding', 'convert_fixtures_html2slim', 'convert_fixtures_slim2html', 'convert_fixtures_remove_head', 'convert_fixtures_overwrite_sources', 'convert_fixtures_delete_temporary_files', cb)
 
 ###### Watch ######
 g.task 'watch', ->
