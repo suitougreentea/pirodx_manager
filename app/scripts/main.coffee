@@ -5,7 +5,7 @@ angular = require('angular')
 _ = require('lodash-node')
 window.$ = require('jquery') # for debug
 
-IIDX = require('./pendual/pendual.js')
+IIDX = require('./pendual/pendual.coffee')
 
 console.log angular
 console.log _
