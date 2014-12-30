@@ -11,7 +11,6 @@
     "gulp-iconv": "0.0.1",
     "gulp-load-plugins": "^0.8.0",
     "gulp-prettify": "^0.3.0",
-    "gulp-rename": "^1.2.0",
     "gulp-replace": "^0.5.0",
     "gulp-sass": "^1.2.4",
     "gulp-shell": "^0.2.11",
