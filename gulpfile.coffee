@@ -37,7 +37,7 @@ g.task 'build',      -> $.runSequence('clean', 'copy', ['slim', 'sass', 'coffee'
 
 # do nothing so far
 g.task "webpack", ->
-  g.src(dest + 'scripts/main.js')
+  g.src(src + 'scripts/main.coffee')
     .pipe($.webpack(require('./webpack.config.coffee')))
     .pipe(g.dest(dest + 'scripts/'))
 
