@@ -19,7 +19,8 @@ sass_src   = src + '**/*.sass'
 coffee_src    = src + '**/*.coffee'
 font_src  = bower_dir + 'bootstrap-sass-official/assets/fonts/bootstrap/*'
 
-fixtures_dir = 'test/pendual/fixtures/'
+fixtures_src = 'test/pendual/fixtures_src/'
+fixtures_dest = 'test/pendual/fixtures/'
 
 ###### Function ######
 compile_slim = (s)   -> g.src(s, {base: src}).pipe($.slim(pretty: true)).pipe(g.dest(dest))
@@ -41,32 +42,12 @@ g.task "webpack", ->
     .pipe($.webpack(require('./webpack.config.coffee')))
     .pipe(g.dest(dest + 'scripts/'))
 
-g.task 'convert_fixtures_convert_encoding', ->
-  g.src(fixtures_dir + '**/*.html')
-    .pipe($.shell('iconv -f sjis -t utf-8 <%= file.path %> > <%= file.path + "-utf8" %>', ignoreErrors: true))
-
-g.task 'convert_fixtures_html2slim', ->
-  g.src(fixtures_dir + '**/*.html-utf8')
-    .pipe($.shell('html2slim <%= file.path %> <%= file.path.replace(/\.html-utf8/, ".slim") %>', ignoreErrors: true))
-
-g.task 'convert_fixtures_slim2html', ->
-  g.src(fixtures_dir + '**/*.slim')
-    .pipe($.shell('slimrb -p <%= file.path %> <%= file.path.replace(/\.slim/, ".html-converted") %>', ignoreErrors: true))
-
-g.task 'convert_fixtures_remove_head', ->
-  g.src(fixtures_dir + '**/*.html-converted')
-    .pipe($.shell('sed -e \'/<head>/,/<\\/head>/d\' <%= file.path %> > <%= file.path.replace(/\.html-converted/, ".html-removed") %>', ignoreErrors: true))
-
-g.task 'convert_fixtures_overwrite_sources', ->
-  g.src(fixtures_dir + '**/*.html-removed')
-    .pipe($.rename(extname: '.html'))
-    .pipe(g.dest(fixtures_dir))
-
-g.task 'convert_fixtures_delete_temporary_files', (cb) ->
-  $.del(fixtures_dir + '**/*.@(html-@(utf8|converted|removed)|slim)', cb)
-
-g.task "convert_fixtures", (cb) ->
-  $.runSequence('convert_fixtures_convert_encoding', 'convert_fixtures_html2slim', 'convert_fixtures_slim2html', 'convert_fixtures_remove_head', 'convert_fixtures_overwrite_sources', 'convert_fixtures_delete_temporary_files', cb)
+g.task 'convert_fixtures', ->
+  g.src(fixtures_src + '**/*.html')
+    .pipe($.iconv({decoding: 'shift_jis', encoding: 'utf8'}))
+    .pipe($.prettify(indent_size: 2))
+    .pipe($.replace(/<head>([\s\S]*?)<\/head>/, ""))
+    .pipe(g.dest(fixtures_dest))
 
 ###### Watch ######
 g.task 'watch', ->
